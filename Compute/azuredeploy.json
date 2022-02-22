@@ -17,6 +17,8 @@
       },
       "dataDiskSize":{
         "type": "int",
+        "minValue": 20,
+        "defaultValue": 60,
         "metadata": {
           "description": "Data disk size in GB"
         }
@@ -43,6 +45,14 @@
         "type": "string",
         "metadata": {
           "description": "Virtual Network Subnet"
+        }
+      },
+      "vmName":{
+        "type": "string",
+        "maxLength": 21,
+        "minLength": 5,
+        "metadata": {
+          "description": "Name of the VM"
         }
       },
       "vmSize": {

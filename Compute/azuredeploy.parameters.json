@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "value": "hades"
+        },
+        "adminPassword": {
+            "value": "Pa$$Word123456"
+        },
+        "dataDiskSize":{
+            "value": 60
+        },
+        "OSVersion": {
+            "value": "2019-Datacenter-Core"
+        },
+        "virtualNetwork": {
+          "value": "IAM-Network"
+        },
+        "virtualSubnet": {
+          "value":"Subnet-Hub"
+        },
+        "vmName":{
+            "value": "IAMDCPRD01"
+        },
+        "vmSize": {
+            "value": "Standard_A2_v2"
+        }
+    }
+  }
