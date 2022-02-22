@@ -15,6 +15,12 @@
           "description": "Password for the Virtual Machine."
         }
       },
+      "dataDiskSize":{
+        "type": "int",
+        "metadata": {
+          "description": "Data disk size in GB"
+        }
+      },
       "OSVersion": {
         "type": "string",
         "defaultValue": "2019-Datacenter-Core",
@@ -51,10 +57,10 @@
       }
     },
     "variables": {
-      "vmName": "[parameters('vmName')]",
-      "vmNicName": "[concat(variables('vmName'),'-NIC')]",
       "adminPassword": "[parameters('adminPassword')]",
       "adminUsername":"[parameters('adminUsername')]",
+      "dataDiskName": "[concat(variables('vmName'), '-DataDisk')]",
+      "dataDiskSize": "[parameters('dataDiskSize')]",
       "location": "[resourceGroup().location]",
       "OSVersion": "[parameters('OSVersion')]",
       "OSDiskName": "[concat(variables('vmName'), '-OSDisk')]",
@@ -63,6 +69,8 @@
       "storageSku": "Standard_LRS",
       "virtualNetwork": "[parameters('virtualNetwork')]",
       "virtualSubnet": "[parameters('virtualSubnet')]",
+      "vmName": "[parameters('vmName')]",
+      "vmNicName": "[concat(variables('vmName'),'-NIC')]",
       "vmSize": "[parameters('vmSize')]"
       
       },
@@ -83,10 +91,6 @@
       {
         "name": "[variables('vmNicName')]",
         "type": "Microsoft.Network/networkInterfaces",
-        "copy": {
-          "name": "serverCount",
-          "count": "[parameters('serverCount')]"
-        },
         "apiVersion": "2019-11-01",
         "location": "[variables('location')]",
         "tags": {
@@ -109,10 +113,6 @@
       {
         "name": "[variables('vmName')]",
         "type": "Microsoft.Compute/virtualMachines",
-        "copy": {
-          "name": "serverCount",
-          "count": "[parameters('serverCount')]"
-          },
         "apiVersion": "2019-07-01",
         "location": "[variables('location')]",
         "dependsOn": [
@@ -139,11 +139,25 @@
               "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(variables('vmName'), '-OSDisk')]",
+            "name": "[variables('osDiskName')]",
             "caching": "ReadWrite",
             "createOption": "FromImage"
             }
           },
+          "dataDisks": [
+            {
+                "lun": 0,
+                "name": "[variables('dataDiskName')]",
+                "createOption": "Attach",
+                "caching": "None",
+                "writeAcceleratorEnabled": false,
+                "managedDisk": {
+                    "storageAccountType": "StandardSSD_LRS"
+                },
+                "deleteOption": "Detach",
+                "diskSizeGB": 60,
+                "toBeDetached": false
+            }],
           "networkProfile": {
             "networkInterfaces": [
               {
