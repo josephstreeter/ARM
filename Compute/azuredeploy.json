@@ -139,7 +139,18 @@
           "osProfile": {
             "computerName": "[variables('vmName')]",
             "adminUsername": "[variables('adminUsername')]",
-            "adminPassword": "[variables('adminPassword')]"
+            "adminPassword": "[variables('adminPassword')]",
+            "windowsConfiguration": {
+              "provisionVMAgent": true,
+              "enableAutomaticUpdates": true,
+              "patchSettings": {
+                "patchMode": "AutomaticByOS",
+                "assessmentMode": "ImageDefault"
+              }
+            },
+            "secrets": [],
+            "allowExtensionOperations": true,
+            "requireGuestProvisionSignal": true
           },
           "storageProfile": {
             "imageReference": {
