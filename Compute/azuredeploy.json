@@ -158,15 +158,13 @@
               "offer": "WindowsServer",
               "sku": "[variables('OSVersion')]",
               "version": "latest"
-          },
-          "osDisk": {
-            "name": "[variables('osDiskName')]",
-            "caching": "ReadWrite",
-            "createOption": "FromImage"
-            }
-          },
-          "dataDisks": [
-            {
+            },
+            "osDisk": {
+              "name": "[variables('osDiskName')]",
+              "caching": "ReadWrite",
+              "createOption": "FromImage"
+            },
+            "dataDisks": {
                 "lun": 0,
                 "name": "[variables('dataDiskName')]",
                 "createOption": "Attach",
@@ -178,7 +176,8 @@
                 "deleteOption": "Detach",
                 "diskSizeGB": 60,
                 "toBeDetached": false
-            }],
+            }
+          },
           "networkProfile": {
             "networkInterfaces": [
               {

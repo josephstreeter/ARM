@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "domainConfigurationType": {
+            "value": "FullySynced"
+        },
+        "domainName": {
+            "value": "aaddscontoso.com"
+        },
+        "filteredSync": {
+            "value": "Disabled"
+        },
+        "location": {
+            "value": "westus"
+        },
+        "notificationSettings": {
+            "value": {
+                "notifyGlobalAdmins": "Enabled",
+                "notifyDcAdmins": "Enabled",
+                "additionalRecipients": []
+            }
+        },
+        "subnetName": {
+            "value": "aadds-subnet"
+        },
+        "vnetName": {
+            "value": "aadds-vnet"
+        },
+        "vnetAddressPrefixes": {
+            "value": [
+                "10.1.0.0/24"
+            ]
+        },
+        "subnetAddressPrefix": {
+            "value": "10.1.0.0/24"
+        },
+        "nsgName": {
+            "value": "aadds-nsg"
+        }
+    }
+}
