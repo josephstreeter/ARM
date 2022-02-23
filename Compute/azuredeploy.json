@@ -18,9 +18,17 @@
       "dataDiskSize":{
         "type": "int",
         "minValue": 20,
+        "maxValue": 100,
         "defaultValue": 60,
         "metadata": {
           "description": "Data disk size in GB"
+        }
+      },
+      "location":{
+        "type": "string",
+        "defaultValue": "[resourceGroup().location]",
+        "metadata": {
+          "description": "Location of resource"
         }
       },
       "OSVersion": {
@@ -71,7 +79,7 @@
       "adminUsername":"[parameters('adminUsername')]",
       "dataDiskName": "[concat(variables('vmName'), '-DataDisk')]",
       "dataDiskSize": "[parameters('dataDiskSize')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('location')]",
       "OSVersion": "[parameters('OSVersion')]",
       "OSDiskName": "[concat(variables('vmName'), '-OSDisk')]",
       "storageName": "[toLower(concat(variables('vmName'),'storage'))]",
@@ -88,7 +96,7 @@
       {
         "name": "[variables('storageName')]",
         "type": "Microsoft.Storage/storageAccounts",
-        "apiVersion": "2019-06-01",
+        "apiVersion": "2021-08-01",
         "location": "[variables('location')]",
         "tags": {
           "displayName": "[variables('storageDisplayName')]"
@@ -101,7 +109,7 @@
       {
         "name": "[variables('vmNicName')]",
         "type": "Microsoft.Network/networkInterfaces",
-        "apiVersion": "2019-11-01",
+        "apiVersion": "2021-08-01",
         "location": "[variables('location')]",
         "tags": {
           "displayName": "[variables('vmNicName')]"
@@ -123,7 +131,7 @@
       {
         "name": "[variables('vmName')]",
         "type": "Microsoft.Compute/virtualMachines",
-        "apiVersion": "2019-07-01",
+        "apiVersion": "2021-11-01",
         "location": "[variables('location')]",
         "dependsOn": [
           "[resourceId('Microsoft.Storage/storageAccounts', toLower(variables('storageName')))]",
@@ -148,7 +156,6 @@
                 "assessmentMode": "ImageDefault"
               }
             },
-            "secrets": [],
             "allowExtensionOperations": true,
             "requireGuestProvisionSignal": true
           },
@@ -174,7 +181,7 @@
                     "storageAccountType": "StandardSSD_LRS"
                 },
                 "deleteOption": "Detach",
-                "diskSizeGB": 60,
+                "diskSizeGB": "[variables('dataDiskSize')]",
                 "toBeDetached": false
             }
           },

@@ -1,13 +1,6 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "metadata": {
-      "_generator": {
-        "name": "bicep",
-        "version": "0.4.613.9944",
-        "templateHash": "5798446691722514607"
-      }
-    },
     "parameters": {
       "domainName": {
         "type": "string",
@@ -31,6 +24,7 @@
       },
       "domainConfigurationType": {
         "type": "string",
+        "allowedValues": ["FullySynced","Scoped"],
         "defaultValue": "FullySynced",
         "metadata": {
           "description": "Domain Configuration Type."
@@ -38,7 +32,8 @@
       },
       "filteredSync": {
         "type": "string",
-        "defaultValue": "Disabled",
+        "allowedValues": ["Enabled","Disabled"],
+        "defaultValue": "Enabled",
         "metadata": {
           "description": "Choose the filtered sync type."
         }

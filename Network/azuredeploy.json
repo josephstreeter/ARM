@@ -1,0 +1,278 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "allowedIPAddresses":{
+            "type": "array",
+            "defaultValue": [
+                "198.150.11.0/24",
+                "198.150.12.0/24",
+                "198.150.17.0/24",
+                "198.150.18.0/24",
+                "198.150.19.0/24"
+              ]
+        }
+    },
+    "variables": {
+      "MATCIPAddresses": [
+        "198.150.11.0/24",
+        "198.150.12.0/24",
+        "198.150.17.0/24",
+        "198.150.18.0/24",
+        "198.150.19.0/24"
+      ],
+    "subnets":{
+        "value":{
+            "subnets":[
+                {
+                    "name": "IAM-Workloads",
+                    "networkPrefix": "172.16.0.0/24",
+                    "nsgName": "Subnet-Hub-NSG"
+                },
+                {
+                    "name": "IAM-Workloads",
+                    "networkPrefix": "172.16.0.0/24",
+                    "nsgName": "Subnet-Hub-NSG"
+                },
+                {
+                    "name": "IAM-Workloads",
+                    "networkPrefix": "172.16.0.0/24",
+                    "nsgName": "Subnet-Hub-NSG"
+                },
+                {
+                    "name": "AzureFirewallSubnet",
+                    "networkPrefix": "172.16.254.0/24",
+                    "nsgName": "Subnet-Hub-NSG"
+                }
+                ]
+            }
+        }
+    },
+    "resources": [
+      {
+        "name": "[variables('IAM-Network')]",
+        "type": "Microsoft.Network/virtualNetworks",
+        "location": "[resourceGroup().location]",
+        "apiVersion": "2016-03-30",
+        "dependsOn": [ ],
+        "tags": {
+          "displayName": "IAM-Network"
+        },
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "[variables('IAM-NetworkPrefix')]"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "[variables('IAM-NetworkSubnetHubName')]",
+              "properties": {
+                "addressPrefix": "[variables('IAM-NetworkSubnetHubPrefix')]"
+              }
+            },
+            {
+              "name": "[variables('IAM-NetworkSubnetDirectoryServicesName')]",
+              "properties": {
+                "addressPrefix": "[variables('IAM-NetworkSubnetDirectoryServicesPrefix')]"
+              }
+            },
+            {
+              "name": "[variables('IAM-NetworkSubnetIdMSName')]",
+              "properties": {
+                "addressPrefix": "[variables('IAM-NetworkSubnetIdMSPrefix')]"
+              }
+            },
+            {
+              "name": "[variables('IAM-NetworkSubnetApplicationsName')]",
+              "properties": {
+                "addressPrefix": "[variables('IAM-NetworkSubnetApplicationsPrefix')]"
+              }
+            },
+            {
+              "name": "[variables('AzureFirewallSubnetName')]",
+              "properties": {
+                "addressPrefix": "[variables('AzureFirewallSubnetPrefix')]"
+              }
+            },
+            {
+              "name": "AzureBastionSubnet",
+              "properties": {
+                  "addressPrefix": "172.16.4.0/27"
+              }
+            }
+          ]
+        }
+      },
+      {
+      "name": "[variables('IAM-NetworkSubnetApplicationsNSGName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2018-08-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-RDP",
+            "properties": {
+              "description": "Remote Desktop",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Allow-WinRM",
+            "properties": {
+              "description": "WomRm",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5986",
+              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('IAM-NetworkSubnetHUBNSGName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2018-08-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-RDP",
+            "properties": {
+              "description": "Remote Desktop",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Allow-WinRM",
+            "properties": {
+              "description": "WomRm",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5986",
+              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('IAM-NetworkSubnetDirectoryServicesNSGName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2018-08-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "Allow-WinRM",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5986",
+              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 301,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Allow-RDP",
+            "properties": {
+              "description": "Remote Desktop",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 201,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "Allow-AzureADSync",
+            "properties": {
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "443",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('IAM-NetworkSubnetIdMSNSGName')]",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2018-08-01",
+      "location": "[variables('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "RDP-ALlow",
+            "properties": {
+              "description": "Remote Desktop",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "3389",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "WinRM-Allow",
+            "properties": {
+              "description": "WomRm",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5986",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
+            }
+          }
+        ],
+        "subnets": [
+            {
+            //"id": "/subscriptions/e1f4e2bd-23bd-4779-b5da-47c1e3b8cc6c/resourceGroups/IAM-Networking/providers/Microsoft.Network/virtualNetworks/IAM-Network/subnets/Subnet-DirectoryServices",
+            "id": "[resourceId('IAM-Networking','Microsoft.Network/virtualNetworks/subnets', variables('IAM-Network'), variables('IAM-NetworkSubnetDirectoryServicesName'))]"
+            }
+        ]
+      }
+    }
+    ],
+    "outputs": {}
