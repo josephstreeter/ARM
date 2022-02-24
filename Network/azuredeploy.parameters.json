@@ -1,0 +1,148 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "allowedIPAddresses":{
+            "value": [
+                "198.150.11.0/24",
+                "198.150.12.0/24",
+                "198.150.17.0/24",
+                "198.150.18.0/24",
+                "198.150.19.0/24"
+              ]
+        },
+        "location": "[resourceGroup().location]",
+        "vNetName": "IAM-Network",
+        "vNetPrefix": "172.16.0.0/16",
+        "subnets":{
+            "value":{
+                "subnets":[
+                    {
+                        "name": "IAM-Workloads",
+                        "networkPrefix": "172.16.0.0/24",
+                        "nsgName": "Subnet-Hub-NSG",
+                        "securityRules": [
+                            {
+                                "name": "Allow-RDP",
+                                "description": "Remote Desktop",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "destinationPortRange": "3389",
+                                "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+                                "destinationAddressPrefix": "*",
+                                "access": "Allow",
+                                "priority": 100,
+                                "direction": "Inbound"
+                            },
+                            {
+                                "name": "Allow-WinRM",
+                                "description": "WimRm",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "destinationPortRange": "5986",
+                                "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+                                "destinationAddressPrefix": "*",
+                                "access": "Allow",
+                                "priority": 101,
+                                "direction": "Inbound"
+                            }
+                          ]
+                    },
+                    {
+                        "name": "IAM-Workloads",
+                        "networkPrefix": "172.16.0.0/24",
+                        "nsgName": "Subnet-Hub-NSG",
+                        "securityRules": [
+                            {
+                                "name": "Allow-RDP",
+                                "description": "Remote Desktop",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "destinationPortRange": "3389",
+                                "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+                                "destinationAddressPrefix": "*",
+                                "access": "Allow",
+                                "priority": 100,
+                                "direction": "Inbound"
+                            },
+                            {
+                                "name": "Allow-WinRM",
+                                "description": "WimRm",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "destinationPortRange": "5986",
+                                "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+                                "destinationAddressPrefix": "*",
+                                "access": "Allow",
+                                "priority": 101,
+                                "direction": "Inbound"
+                            }
+                          ]
+                        
+                    },
+                    {
+                        "name": "IAM-Workloads",
+                        "networkPrefix": "172.16.0.0/24",
+                        "nsgName": "Subnet-Hub-NSG",
+                        "securityRules": [
+                            {
+                                "name": "Allow-RDP",
+                                "description": "Remote Desktop",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "destinationPortRange": "3389",
+                                "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+                                "destinationAddressPrefix": "*",
+                                "access": "Allow",
+                                "priority": 100,
+                                "direction": "Inbound"
+                            },
+                            {
+                                "name": "Allow-WinRM",
+                                "description": "WimRm",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "destinationPortRange": "5986",
+                                "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+                                "destinationAddressPrefix": "*",
+                                "access": "Allow",
+                                "priority": 101,
+                                "direction": "Inbound"
+                            }
+                          ]
+                    },
+                    {
+                        "name": "AzureFirewallSubnet",
+                        "networkPrefix": "172.16.254.0/24",
+                        "nsgName": "Subnet-Hub-NSG",
+                        "securityRules": [
+                            {
+                                "name": "Allow-RDP",
+                                "description": "Remote Desktop",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "destinationPortRange": "3389",
+                                "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+                                "destinationAddressPrefix": "*",
+                                "access": "Allow",
+                                "priority": 100,
+                                "direction": "Inbound"
+                            },
+                            {
+                                "name": "Allow-WinRM",
+                                "description": "WimRm",
+                                "protocol": "Tcp",
+                                "sourcePortRange": "*",
+                                "destinationPortRange": "5986",
+                                "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
+                                "destinationAddressPrefix": "*",
+                                "access": "Allow",
+                                "priority": 101,
+                                "direction": "Inbound"
+                            }
+                          ]
+                    }
+                ]
+            }
+        }
+  }

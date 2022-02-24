@@ -3,65 +3,50 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "allowedIPAddresses":{
-            "type": "array",
-            "defaultValue": [
-                "198.150.11.0/24",
-                "198.150.12.0/24",
-                "198.150.17.0/24",
-                "198.150.18.0/24",
-                "198.150.19.0/24"
-              ]
+            "type": "array"
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+              "description": "Location for all resources."
+            }
+        },
+        "vNetName": {
+            "type": "string",
+            "metadata": {
+              "description": "vNet Name"
+            }
+        },
+        "vNetPrefix": {
+            "type": "string",
+            "metadata": {
+              "description": "vNet Prefix"
+            }
+        },
+        "subnets":{
+            "type": "object"
         }
     },
     "variables": {
-      "MATCIPAddresses": [
-        "198.150.11.0/24",
-        "198.150.12.0/24",
-        "198.150.17.0/24",
-        "198.150.18.0/24",
-        "198.150.19.0/24"
-      ],
-    "subnets":{
-        "value":{
-            "subnets":[
-                {
-                    "name": "IAM-Workloads",
-                    "networkPrefix": "172.16.0.0/24",
-                    "nsgName": "Subnet-Hub-NSG"
-                },
-                {
-                    "name": "IAM-Workloads",
-                    "networkPrefix": "172.16.0.0/24",
-                    "nsgName": "Subnet-Hub-NSG"
-                },
-                {
-                    "name": "IAM-Workloads",
-                    "networkPrefix": "172.16.0.0/24",
-                    "nsgName": "Subnet-Hub-NSG"
-                },
-                {
-                    "name": "AzureFirewallSubnet",
-                    "networkPrefix": "172.16.254.0/24",
-                    "nsgName": "Subnet-Hub-NSG"
-                }
-                ]
-            }
-        }
+      "MATCIPAddresses": "[parameters(allowedIPAddresses)]",
+      "vNetName": "[parameters(vNetName)]",
+      "vNetPrefix": "[parameters(vNetPrefix)]"
     },
     "resources": [
       {
-        "name": "[variables('IAM-Network')]",
+        "name": "[variables('vNetName')]",
         "type": "Microsoft.Network/virtualNetworks",
-        "location": "[resourceGroup().location]",
+        "location": "[parameters(location)]",
         "apiVersion": "2016-03-30",
         "dependsOn": [ ],
         "tags": {
-          "displayName": "IAM-Network"
+          "displayName": "[variables('vNetName')]"
         },
         "properties": {
           "addressSpace": {
             "addressPrefixes": [
-              "[variables('IAM-NetworkPrefix')]"
+              "[variables('vNetPrefix')]"
             ]
           },
           "subnets": [
@@ -128,7 +113,7 @@
           {
             "name": "Allow-WinRM",
             "properties": {
-              "description": "WomRm",
+              "description": "WimRm",
               "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "5986",
@@ -166,7 +151,7 @@
           {
             "name": "Allow-WinRM",
             "properties": {
-              "description": "WomRm",
+              "description": "WimRm",
               "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "5986",
@@ -254,7 +239,7 @@
           {
             "name": "WinRM-Allow",
             "properties": {
-              "description": "WomRm",
+              "description": "WimRm",
               "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "5986",
