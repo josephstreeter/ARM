@@ -5,13 +5,6 @@
         "allowedIPAddresses":{
             "type": "array"
         },
-        "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]",
-            "metadata": {
-              "description": "Location for all resources."
-            }
-        },
         "vNetName": {
             "type": "string",
             "metadata": {
@@ -24,21 +17,21 @@
               "description": "vNet Prefix"
             }
         },
-        "subnets":{
+        "networks":{
             "type": "object"
         }
     },
     "variables": {
-      "MATCIPAddresses": "[parameters(allowedIPAddresses)]",
-      "vNetName": "[parameters(vNetName)]",
-      "vNetPrefix": "[parameters(vNetPrefix)]"
+      "allowedIPAddresses": "[parameters('allowedIPAddresses')]",
+      "vNetName": "[parameters('vNetName')]",
+      "vNetPrefix": "[parameters('vNetPrefix')]"
     },
     "resources": [
       {
-        "name": "[variables('vNetName')]",
+        "apiVersion": "2020-05-01",
         "type": "Microsoft.Network/virtualNetworks",
-        "location": "[parameters(location)]",
-        "apiVersion": "2016-03-30",
+        "name": "[variables('vNetName')]",
+        "location": "[resourceGroup().location]",
         "dependsOn": [ ],
         "tags": {
           "displayName": "[variables('vNetName')]"
@@ -49,215 +42,67 @@
               "[variables('vNetPrefix')]"
             ]
           },
-          "subnets": [
+          "subnets": 
+          [
             {
-              "name": "[variables('IAM-NetworkSubnetHubName')]",
+              "name": "[parameters('networks').subnets[0].name]",
               "properties": {
-                "addressPrefix": "[variables('IAM-NetworkSubnetHubPrefix')]"
+                "addressPrefix": "[parameters('networks').subnets[0].networkPrefix]"
               }
             },
             {
-              "name": "[variables('IAM-NetworkSubnetDirectoryServicesName')]",
+              "name": "[parameters('networks').subnets[1].name]",
               "properties": {
-                "addressPrefix": "[variables('IAM-NetworkSubnetDirectoryServicesPrefix')]"
+                "addressPrefix": "[parameters('networks').subnets[1].networkPrefix]"
               }
             },
             {
-              "name": "[variables('IAM-NetworkSubnetIdMSName')]",
+              "name": "[parameters('networks').subnets[2].name]",
               "properties": {
-                "addressPrefix": "[variables('IAM-NetworkSubnetIdMSPrefix')]"
-              }
-            },
-            {
-              "name": "[variables('IAM-NetworkSubnetApplicationsName')]",
-              "properties": {
-                "addressPrefix": "[variables('IAM-NetworkSubnetApplicationsPrefix')]"
-              }
-            },
-            {
-              "name": "[variables('AzureFirewallSubnetName')]",
-              "properties": {
-                "addressPrefix": "[variables('AzureFirewallSubnetPrefix')]"
-              }
-            },
-            {
-              "name": "AzureBastionSubnet",
-              "properties": {
-                  "addressPrefix": "172.16.4.0/27"
+                "addressPrefix": "[parameters('networks').subnets[2].networkPrefix]"
               }
             }
           ]
         }
       },
       {
-      "name": "[variables('IAM-NetworkSubnetApplicationsNSGName')]",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2018-08-01",
-      "location": "[variables('location')]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "Allow-RDP",
-            "properties": {
-              "description": "Remote Desktop",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Allow-WinRM",
-            "properties": {
-              "description": "WimRm",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "5986",
-              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 101,
-              "direction": "Inbound"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "[variables('IAM-NetworkSubnetHUBNSGName')]",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2018-08-01",
-      "location": "[variables('location')]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "Allow-RDP",
-            "properties": {
-              "description": "Remote Desktop",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Allow-WinRM",
-            "properties": {
-              "description": "WimRm",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "5986",
-              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 101,
-              "direction": "Inbound"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "[variables('IAM-NetworkSubnetDirectoryServicesNSGName')]",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2018-08-01",
-      "location": "[variables('location')]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "Allow-WinRM",
-            "properties": {
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "5986",
-              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 301,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Allow-RDP",
-            "properties": {
-              "description": "Remote Desktop",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefixes": "[variables('MATCIPAddresses')]",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 201,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "Allow-AzureADSync",
-            "properties": {
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "443",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 101,
-              "direction": "Inbound"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "[variables('IAM-NetworkSubnetIdMSNSGName')]",
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2018-08-01",
-      "location": "[variables('location')]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "RDP-ALlow",
-            "properties": {
-              "description": "Remote Desktop",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "3389",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 100,
-              "direction": "Inbound"
-            }
-          },
-          {
-            "name": "WinRM-Allow",
-            "properties": {
-              "description": "WimRm",
-              "protocol": "Tcp",
-              "sourcePortRange": "*",
-              "destinationPortRange": "5986",
-              "sourceAddressPrefix": "*",
-              "destinationAddressPrefix": "*",
-              "access": "Allow",
-              "priority": 101,
-              "direction": "Inbound"
-            }
-          }
-        ],
-        "subnets": [
+        "apiVersion": "2018-08-01",
+        "name": "[parameters('networks')subnets[1].nsgName]",
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "securityRules": [
             {
-            //"id": "/subscriptions/e1f4e2bd-23bd-4779-b5da-47c1e3b8cc6c/resourceGroups/IAM-Networking/providers/Microsoft.Network/virtualNetworks/IAM-Network/subnets/Subnet-DirectoryServices",
-            "id": "[resourceId('IAM-Networking','Microsoft.Network/virtualNetworks/subnets', variables('IAM-Network'), variables('IAM-NetworkSubnetDirectoryServicesName'))]"
+              "name": "Allow-RDP",
+              "properties": {
+                "description": "Remote Desktop",
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "3389",
+                "sourceAddressPrefixes": "[variables('allowedIPAddresses')]",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound"
+              }
+          },
+          {
+            "name": "Allow-WinRM",
+            "properties": {
+              "description": "WimRm",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "5986",
+              "sourceAddressPrefixes": "[variables('allowedIPAddresses')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 101,
+              "direction": "Inbound"
             }
+          }
         ]
       }
     }
-    ],
-    "outputs": {}
+  ],
+  "outputs": {}
+}
