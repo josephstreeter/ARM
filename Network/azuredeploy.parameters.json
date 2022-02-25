@@ -2,6 +2,8 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "vNetName": {"value": "IAM-Network-Test"},
+        "vNetPrefix": {"value": "172.16.0.0/22"},
         "allowedIPAddresses":{
             "value": [
                 "198.150.11.0/24",
@@ -11,16 +13,13 @@
                 "198.150.19.0/24"
               ]
         },
-        "location": "[resourceGroup().location]",
-        "vNetName": "IAM-Network",
-        "vNetPrefix": "172.16.0.0/16",
-        "subnets":{
+        "networks":{
             "value":{
                 "subnets":[
                     {
-                        "name": "IAM-Workloads",
-                        "networkPrefix": "172.16.0.0/24",
-                        "nsgName": "Subnet-Hub-NSG",
+                        "name": "IAM-Web-Tier",
+                        "networkPrefix": "172.16.1.0/24",
+                        "nsgName": "IAM-Web-Tier-NSG",
                         "securityRules": [
                             {
                                 "name": "Allow-RDP",
@@ -49,9 +48,9 @@
                           ]
                     },
                     {
-                        "name": "IAM-Workloads",
-                        "networkPrefix": "172.16.0.0/24",
-                        "nsgName": "Subnet-Hub-NSG",
+                        "name": "IAM-Business-Tier",
+                        "networkPrefix": "172.16.2.0/24",
+                        "nsgName": "IAM-Business-Tier-NSG",
                         "securityRules": [
                             {
                                 "name": "Allow-RDP",
@@ -81,9 +80,9 @@
                         
                     },
                     {
-                        "name": "IAM-Workloads",
+                        "name": "IAM-Data-Tier",
                         "networkPrefix": "172.16.0.0/24",
-                        "nsgName": "Subnet-Hub-NSG",
+                        "nsgName": "IAM-Data-Tier-NSG",
                         "securityRules": [
                             {
                                 "name": "Allow-RDP",
@@ -113,7 +112,7 @@
                     },
                     {
                         "name": "AzureFirewallSubnet",
-                        "networkPrefix": "172.16.254.0/24",
+                        "networkPrefix": "172.16.0.0/24",
                         "nsgName": "Subnet-Hub-NSG",
                         "securityRules": [
                             {
@@ -145,4 +144,5 @@
                 ]
             }
         }
-  }
+    }
+}
